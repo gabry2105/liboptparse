@@ -26,21 +26,25 @@ TEST(Options, Test_01) {
     Options::opts_container container;
     Options::value_type opt_value(new OptionArgumentValue("42"));
     container['r'] = Options::value_type(opt_value);
-    Options options(program_info, container.cbegin(), container.cend());
+    Options options(program_info,
+                    container.cbegin(),
+                    container.cend());
     CHECK_TRUE(options.at('r') == opt_value);    
 }
 
 /**
  * HAVE A new option object from an existing map
  * WHEN gets a value from a key through [] operator overload
- * THEN righe object to be returned.
+ * THEN right object to be returned.
  */
 TEST(Options, Test_02) {
     ProgramInfo program_info("program_info");
     Options::opts_container container;
     Options::value_type opt_value(new OptionArgumentValue("42"));
     container['r'] = Options::value_type(opt_value);
-    Options options(program_info, container.cbegin(), container.cend());
+    Options options(program_info,
+                    container.cbegin(),
+                    container.cend());
     CHECK_TRUE(options['r'] == opt_value);
 }
 
