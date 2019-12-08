@@ -1,0 +1,9 @@
+
+     #USEFULL CONFIGURATION OPTIONS
+
+     Give a prefix to the name of the project:
+      > configure --program-prefix put_prefix_here
+
+     Perform a cross compilation
+      > configure --host [hostsystem] --target [target-system]
+
