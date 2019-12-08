@@ -22,7 +22,7 @@
  * \author    Gabriele Labita
  *            <gabriele.labita@linux.it>
  *
- * This module contains the data strcuture used to represent the
+ * This file contains the data strcuture used to represent the
  * option arguments.
  */
 
@@ -394,7 +394,7 @@ bool operator==(const OptionArgument& first,
                 const OptionArgument& second);
 
 /*!
- * Not equla operator overload.
+ * Not equal operator overload.
  * \param first  - First element to compare.
  * \param second - Second element to compare.
  * \return True if the two arguments are not equals, false otherwise.
