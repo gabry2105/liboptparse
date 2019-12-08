@@ -218,9 +218,9 @@ private:
     Options(const Options&&);
 
     std::unique_ptr<args_container> _args;
-        /*! Pointer to the info about the program */
+    /*! Pointer to the info about the program */
     std::shared_ptr<ProgramInfo>    _program_info;
-        /*! Pointer to the dictionary of the options/values to gets. */
+    /*! Pointer to the dictionary of the options/values to gets. */
     std::unique_ptr<opts_container> _opts;
 
 };
