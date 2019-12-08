@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = liboptparse.la
 nobase_include_HEADERS = liboptparse/liboptparse.hh \
 	liboptparse/optargs.hh \
+	liboptparse/options.hh \
 	liboptparse/parser.hh \
 	liboptparse/program_info.hh \
 	liboptparse/utils.hh
@@ -14,6 +15,8 @@ liboptparse_la_SOURCES = \
 	liboptparse/liboptparse.hh \
 	liboptparse/optargs.hh \
 	optargs.cc \
+	liboptparse/options.hh \
+	options.cc \
 	liboptparse/parser.hh \
 	parser.cc \
 	liboptparse/program_info.hh \
