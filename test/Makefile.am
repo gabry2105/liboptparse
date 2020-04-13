@@ -9,6 +9,7 @@ liboptparse_SOURCES = \
 	../src/liboptparse/types.hh \
 	../src/liboptparse/optargs.hh \
 	../src/liboptparse/options.hh \
+	../src/liboptparse/options_priv.hpp \
 	../src/liboptparse/parser.hh \
 	../src/liboptparse/program_info.hh \
 	../src/liboptparse/utils.hh \

@@ -284,8 +284,8 @@ namespace __LIBOPTPARSE__ {
 std::shared_ptr<const Options> OptionParser::parse(
     int argc, const char *argv[]) {
     assert(OK());
-    Options::opts_container opts_values;
-    Options::args_container args_values;
+    Options::options_container opts_values;
+    Options::arguments_container args_values;
     std::map<char, const OptionArgument*> arguments;
     std::map<std::string, char> opt_mapping;
     std::list<__LIBOPTPARSE__::Token> tokens;

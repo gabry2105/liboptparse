@@ -19,7 +19,7 @@ TEST_GROUP(Options) {
  */
 TEST(Options, Test_01) {
     ProgramInfo program_info("program_info");
-    Options::opts_container container;
+    Options::options_container container;
     Options::value_type opt_value(new OptionArgumentValue("42"));
     container['r'] = Options::value_type(opt_value);
     Options options(program_info,
@@ -35,7 +35,7 @@ TEST(Options, Test_01) {
  */
 TEST(Options, Test_02) {
     ProgramInfo program_info("program_info");
-    Options::opts_container container;
+    Options::options_container container;
     Options::value_type opt_value(new OptionArgumentValue("42"));
     container['r'] = Options::value_type(opt_value);
     Options options(program_info,

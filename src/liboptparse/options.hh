@@ -52,13 +52,13 @@ public:
      */
     typedef std::shared_ptr<const OptionArgumentValue> value_type;
     /*! Typedefinition for the container used for options. */
-    typedef std::map<char, value_type>     opts_container;
+    typedef std::map<char, value_type>     options_container;
     /*! Typedefinition for the container used for plain aguments. */
-    typedef std::list<value_type>          args_container;
+    typedef std::list<value_type>          arguments_container;
     /*! Typedefinition for option's container. */
-    typedef opts_container::const_iterator opts_const_iterator;
+    typedef options_container::const_iterator options_const_iterator;
     /*! Typedefinition for argument's container */
-    typedef args_container::const_iterator args_const_iterator;
+    typedef arguments_container::const_iterator arguments_const_iterator;
 
 public:    
     /*!
@@ -86,10 +86,7 @@ public:
         OptsForwardIterator opts_begin,
         OptsForwardIterator opts_end,
         ArgsForwardIterator args_begin,
-        ArgsForwardIterator args_end)
-        : _args(new args_container(args_begin, args_end)),
-          _program_info(new ProgramInfo(program_info)),
-          _opts(new opts_container(opts_begin, opts_end)) { };
+        ArgsForwardIterator args_end);
 
     /*!
      * Constructor with 3 parameters. Initialize this object with
@@ -109,10 +106,7 @@ public:
     Options(
         const ProgramInfo&  program_info,
         OptsForwardIterator opts_begin,
-        OptsForwardIterator opts_end)
-        : _args(new args_container()),
-          _program_info(new ProgramInfo(program_info)),
-          _opts(new opts_container(opts_begin, opts_end)) { };
+        OptsForwardIterator opts_end);
 
     
     /*! Destructor. It destroys the pointer to the dictionary. */
@@ -158,7 +152,7 @@ public:
      * \pre  This must be a valid.
      * \post This is still valid.
      */
-    opts_const_iterator opts_cbegin() const noexcept;
+    options_const_iterator options_cbegin() const noexcept;
 
     /*!
      * Gets a const iterator to the next element after the last one
@@ -170,7 +164,7 @@ public:
      * \pre  This must be a valid.
      * \post This is still valid.
      */
-    opts_const_iterator opts_cend() const noexcept;
+    options_const_iterator options_cend() const noexcept;
 
     /*!
      * Gets a const iterator to the begin of the arguments collection.
@@ -181,7 +175,7 @@ public:
      * \pre  This must be a valid.
      * \post This is still valid.
      */
-    args_const_iterator args_cbegin() const noexcept;
+    arguments_const_iterator arguments_cbegin() const noexcept;
 
     /*!
      * Gets a const iterator to the next element after the last one
@@ -193,7 +187,7 @@ public:
      * \pre  This must be a valid.
      * \post This is still valid.
      */
-    args_const_iterator args_cend() const noexcept;
+    arguments_const_iterator arguments_cend() const noexcept;
 
     /*!
      * Gets the name of the program lunched.
@@ -206,23 +200,19 @@ public:
     const std::string& get_program_name() const noexcept;
 
 private:
-    /*! Assertion method used to check if this object is valid. */
-    bool OK() const noexcept;
-    
     /*! Private not implemented. */
     Options();    
     /*! Private not implemented. */
     Options(const Options&);
     /*! Private not implemented. */
     Options(const Options&&);
+    Options& operator=(const Options&);
 
-    std::unique_ptr<args_container> _args;
-    /*! Pointer to the info about the program */
-    std::shared_ptr<ProgramInfo>    _program_info;
-    /*! Pointer to the dictionary of the options/values to gets. */
-    std::unique_ptr<opts_container> _opts;
-
+    class Impl;
+    std::unique_ptr<Impl> _pimpl;
 };
 
+#include "options_priv.hpp"
 
 #endif
+

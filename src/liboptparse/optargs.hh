@@ -27,7 +27,7 @@
  */
 
 #include <string>
-#include <ostream>
+#include <memory>
 
 #ifndef LIBOPTARGS_OPTARGS_INCLUDE_GUARD_HH
 #define LIBOPTARGS_OPTARGS_INCLUDE_GUARD_HH 1
@@ -50,6 +50,16 @@ public:
      * \param value - Value to set as string.
      */
     explicit OptionArgumentValue(const std::string& value);
+
+    /*!
+     * Copy constructor. Initialize the current value with the same
+     * passed.
+     */
+    OptionArgumentValue(const OptionArgumentValue& option_value);
+
+    /*! Move constructor. */
+    OptionArgumentValue(const OptionArgumentValue&& option_value);
+
     
     /*! Default constructor. */
     ~OptionArgumentValue();
@@ -145,11 +155,6 @@ public:
         const OptionArgumentValue& value) noexcept;
 
 private:
-    /*! Private not implemented. */
-    OptionArgumentValue(const OptionArgumentValue& option_value);
-
-    /*! Private not implemented. */
-    OptionArgumentValue(const OptionArgumentValue&& option_value);
 
     /*! Value of the argument. */
     std::string _value;
@@ -165,21 +170,6 @@ private:
  */
 bool operator==(const OptionArgumentValue& first,
                 const OptionArgumentValue& second);
-
-/*!
- * Not equality operator overload. Checks if the two option value
- * passed are not equals. Two option values are equals if they have
- * same value (get_value returned value). This function used
- * operator== overalod.
- * \param  first  - First object to compare.
- * \param  second - Second object to compare.
- * \return True if two values are different, false otherwise.
- */
-bool operator!=(const OptionArgumentValue& first,
-                const OptionArgumentValue& second);
-
-std::ostream& operator<<(std::ostream& os,
-                         const OptionArgumentValue& value);
 
 /*!
  * This is an enumeration type representing the value type of an
@@ -232,7 +222,8 @@ public:
      *       valid long name.
      * \post The option argument is a valid OptionArgument
      */
-    explicit OptionArgument(char short_name, const std::string& long_name);
+    explicit OptionArgument(char short_name,
+                            const std::string& long_name);
 
     /*!
      * Copy constructor. Initialize this object as a copy of the
@@ -365,22 +356,10 @@ public:
      */
     OptionArgument& set_type(OptionArgumentType value_type) noexcept;
 private:
-
-    /*! Assertion method. */
-    bool OK() const;
-
-    /*! Short name of the option. */
-    char               _short_name;
-    /*! Lon name of the option. */
-    std::string        _long_name;
-    /*! Help message of the option. */
-    std::string        _help;
-    /*! Defualt value of the option. */
-    std::string        _default_value;
-    /*! Metavar to use for the option. */
-    std::string        _metavar;
-    /*! Type of the option argument. */
-    OptionArgumentType _type = OptionArgumentType::value;
+    OptionArgument& operator=(const OptionArgument&);
+    
+    class Impl;
+    std::unique_ptr<Impl> _pimpl;
 };
 
 /*!

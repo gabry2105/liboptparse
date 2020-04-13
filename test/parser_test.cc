@@ -197,8 +197,8 @@ TEST(OptionParser, Test_13) {
     const char *argv[] = { "program_name", "-r", "42" };
     auto options = parser.parse(3, argv);
     int args_size = std::count_if(
-        options -> args_cbegin(),
-        options -> args_cend(),
+        options -> arguments_cbegin(),
+        options -> arguments_cend(),
         [](auto elem) { return elem == elem; });
     CHECK_EQUAL(1, args_size);
 }
@@ -214,7 +214,7 @@ TEST(OptionParser, Test_14) {
     parser.add('r', "reply").set_type(OptionArgumentType::flag);
     const char *argv[] = { "program_name", "-r", "42" };
     auto options = parser.parse(3, argv);
-    auto first = *(options -> args_cbegin());
+    auto first = *(options -> arguments_cbegin());
     CHECK_EQUAL((std::string)(*first), "42")
 }
 

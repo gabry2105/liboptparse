@@ -16,6 +16,7 @@ liboptparse_la_SOURCES = \
 	liboptparse/optargs.hh \
 	optargs.cc \
 	liboptparse/options.hh \
+	liboptparse/options_priv.hpp \
 	options.cc \
 	liboptparse/parser.hh \
 	parser.cc \

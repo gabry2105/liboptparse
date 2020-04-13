@@ -17,7 +17,6 @@
 
 #include <string>
 #include <sstream>
-#include <iostream>
 #include <cassert>
 #include <locale>
 
@@ -28,6 +27,16 @@ OptionArgumentValue::OptionArgumentValue() { }
 
 OptionArgumentValue::OptionArgumentValue(const std::string& value)
     : _value(value) { }
+
+OptionArgumentValue::OptionArgumentValue(
+    const OptionArgumentValue& option_argument_value)
+    : _value(option_argument_value._value) { }
+
+
+OptionArgumentValue::OptionArgumentValue(
+    const OptionArgumentValue&& option_argument_value)
+    : _value(std::move(option_argument_value._value)) { }
+
 
 OptionArgumentValue::~OptionArgumentValue() { }
 
@@ -104,98 +113,153 @@ OptionArgumentValue::operator std::string() const {
     return get_value();
 }
 
+    
+class OptionArgument::Impl {
+public:
+    explicit Impl(char short_name)
+        : _short_name(short_name) {
+        assert(OK());
+    }
+
+    Impl(char short_name,
+         const std::string& long_name)
+        : _short_name(short_name), _long_name(long_name) {
+        assert(OK());
+    }
+
+    Impl(const Impl& impl)
+        : _short_name(impl._short_name),
+          _long_name(impl._long_name),
+          _help(impl._help),
+          _default_value(impl._default_value),
+          _metavar(impl._metavar),
+          _type(impl._type){
+        assert(impl.OK());    
+        assert(OK());
+    }
+    
+    char get_short_name() const noexcept {
+        assert(OK());
+        return _short_name;
+    }
+
+    const std::string& get_long_name() const noexcept {
+        assert(OK());
+        return _long_name;
+    }
+    
+    const std::string& get_help() const noexcept {
+        return _help;
+    }
+
+    void set_help(const std::string& help) noexcept {
+        _help = help;
+    }
+
+    const std::string& get_default_value() const noexcept {
+        return _default_value;
+    }
+
+    void set_default_value(
+        const std::string& default_value) noexcept {
+        _default_value = default_value;
+    }
+
+    const std::string& get_metavar() const noexcept {
+        return _metavar;
+    }
+
+    void set_metavar(const std::string& metavar) noexcept {
+        _metavar = metavar;
+    }
+
+    OptionArgumentType get_type() const noexcept {
+        return _type;
+    }
+
+    void set_type(OptionArgumentType type) noexcept {
+        _type = type;
+    }
+
+private:
+    bool OK() const {
+        return _LIBOPTPARSE_::is_valid_short_name(_short_name) &&
+            _LIBOPTPARSE_::is_valid_long_name(_long_name);
+    }
+
+    char               _short_name;
+    std::string        _long_name;
+    std::string        _help;
+    std::string        _default_value;
+    std::string        _metavar;
+    OptionArgumentType _type = OptionArgumentType::value;
+};
+
 
 OptionArgument::OptionArgument(char short_name)
-    : _short_name(short_name) {
-    assert(OK());
+    : _pimpl(new Impl(short_name)) {
 }
 
-OptionArgument::OptionArgument(char short_name,
-                               const std::string& long_name)
-    : _short_name(short_name), _long_name(long_name) {
-    assert(OK());
-}
+OptionArgument::OptionArgument(
+    char short_name,
+    const std::string& long_name)
+    : _pimpl(new Impl(short_name, long_name)) { }
 
 OptionArgument::OptionArgument(const OptionArgument& option_argument)
-    : _short_name(option_argument._short_name),
-      _long_name(option_argument._long_name),
-      _help(option_argument._help),
-      _default_value(option_argument._default_value),
-      _metavar(option_argument._metavar),
-      _type(option_argument._type){
-    assert(option_argument.OK());    
-    assert(OK());
-}
+    : _pimpl(new Impl(*option_argument._pimpl)) { }
 
-OptionArgument::OptionArgument(OptionArgument&& option_argument)  {
-    assert(option_argument.OK());
-
-    _short_name = std::move(option_argument._short_name);
-    _long_name = std::move(option_argument._long_name);
-    _help = std::move(option_argument._help);
-    _default_value = std::move(option_argument._default_value);
-    _metavar = std::move(option_argument._metavar);
-
-    assert(OK());
-}
+OptionArgument::OptionArgument(OptionArgument&& option_argument)
+    : _pimpl(std::move(option_argument._pimpl)) { }
 
 OptionArgument::~OptionArgument() { }
 
 char OptionArgument::get_short_name() const noexcept {
-    assert(OK());
-    return _short_name;
+    return _pimpl -> get_short_name();
 }
 
 const std::string& OptionArgument::get_long_name() const noexcept {
-    assert(OK());
-    return _long_name;
+    return _pimpl -> get_long_name();
 }
 
 const std::string& OptionArgument::get_help() const noexcept {
-    return _help;
+    return _pimpl -> get_help();
 }
 
 OptionArgument& OptionArgument::set_help(
     const std::string& help) noexcept {
-    _help = help;
+    _pimpl -> set_help(help);
     return *this;
 }
 
 const std::string&
 OptionArgument::get_default_value() const noexcept {
-    return _default_value;
+    return _pimpl -> get_default_value();
 }
 
 OptionArgument& OptionArgument::set_default_value(
     const std::string& default_value) noexcept {
-    _default_value = default_value;
+    _pimpl -> set_default_value(default_value);
     return *this;
 }
 
 const std::string& OptionArgument::get_metavar() const noexcept {
-    return _metavar;
+    return _pimpl -> get_metavar();
 }
 
 OptionArgument& OptionArgument::set_metavar(
     const std::string& metavar) noexcept {
-    _metavar = metavar;
+    _pimpl -> set_metavar(metavar);
     return *this;
 }
 
 OptionArgumentType OptionArgument::get_type() const noexcept {
-    return _type;
+    return _pimpl -> get_type();
 }
 
 OptionArgument& OptionArgument::set_type(
     OptionArgumentType type) noexcept {
-    _type = type;
+    _pimpl -> set_type(type);
     return *this;
-}
-
-
-bool OptionArgument::OK() const {
-    return _LIBOPTPARSE_::is_valid_short_name(_short_name) &&
-        _LIBOPTPARSE_::is_valid_long_name(_long_name);
 }
 
 bool operator==(const OptionArgument& first,

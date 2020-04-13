@@ -44,11 +44,11 @@ struct ProgramInfo {
     ProgramInfo();
 
     explicit ProgramInfo(const std::string& name);
-    explicit ProgramInfo(const std::string& name,
-                         const std::string& help);
-    explicit ProgramInfo(const std::string& name,
-                         const std::string& help,
-                         const std::string& version);
+    ProgramInfo(const std::string& name,
+                const std::string& help);
+    ProgramInfo(const std::string& name,
+                const std::string& help,
+                const std::string& version);
     explicit ProgramInfo(const ProgramInfo& program_info);
     
     /*! Default destructor. */
