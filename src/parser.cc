@@ -30,91 +30,7 @@
 #include "liboptparse/parser.hh"
 #include "liboptparse/utils.hh"
 
-bool operator==(const OptionArgumentValue& first,
-                const OptionArgumentValue& second) {
-    return first.get_value() == second.get_value();
-}
-
-bool operator!=(const OptionArgumentValue& first,
-                const OptionArgumentValue& second) {
-    return !(first == second);
-}
-
-std::ostream& operator<<(std::ostream& os,
-                         const OptionArgumentValue& value) {
-    os << value.get_value();
-    return os;
-}
-
-OptionParser::OptionParser()
-    : _option_arguments(new container()),
-      _program_info(new ProgramInfo()) { }
-
-OptionParser::OptionParser(const ProgramInfo& program_info)
-    : _option_arguments(new container()),
-      _program_info(new ProgramInfo(program_info)) { }
-
-OptionParser::~OptionParser() { }
-
-OptionArgument& OptionParser::add(const OptionArgument& argument) {
-    assert(OK() && _LIBOPTPARSE_::is_valid_opt_arg(argument));
-    std::shared_ptr<OptionArgument> ptr(new OptionArgument(argument));
-    _option_arguments -> push_back(ptr);
-    assert(OK() &&
-           _LIBOPTPARSE_::is_valid_opt_arg(*ptr) &&
-           *ptr == argument);
-    return *ptr;
-}
-
-OptionArgument& OptionParser::add(char short_name) {
-    assert(OK() && _LIBOPTPARSE_::is_valid_short_name(short_name));
-    std::shared_ptr<OptionArgument> ptr(new OptionArgument(
-                                            short_name));
-    _option_arguments -> push_back(ptr);
-    assert(OK() &&
-           _LIBOPTPARSE_::is_valid_opt_arg(*ptr) &&
-           ptr -> get_short_name() == short_name);
-    return *ptr;
-}
-
-OptionArgument& OptionParser::add(char short_name,
-                                  const std::string& long_name) {
-    assert(OK() &&
-           _LIBOPTPARSE_::is_valid_short_name(short_name) &&
-           _LIBOPTPARSE_::is_valid_long_name(long_name));
-    std::shared_ptr<OptionArgument> ptr(new OptionArgument(
-                                            short_name,
-                                            long_name));
-    _option_arguments -> push_back(ptr);
-    assert(OK() &&
-           _LIBOPTPARSE_::is_valid_opt_arg(*ptr) &&
-           ptr -> get_short_name() == short_name &&
-           ptr -> get_long_name() == long_name);
-    return *ptr;
-}
-
-OptionParser::const_iterator OptionParser::cbegin() {
-    assert(OK());
-    auto itr = _option_arguments -> cbegin();
-    assert(OK());
-    return itr;
-}
-
-OptionParser::const_iterator OptionParser::cend() {
-    assert(OK());
-    auto itr = _option_arguments -> cend();
-    assert(OK());
-    return itr;
-}
-
-bool OptionParser::OK() const noexcept {
-    for (auto& opt_arg : *_option_arguments) {
-        _LIBOPTPARSE_::is_valid_opt_arg(*opt_arg);
-    }
-    return true;
-}
-
-namespace __LIBOPTPARSE__ {
+namespace {
     const std::shared_ptr<OptionArgumentValue> TRUE(
         new OptionArgumentValue("true"));
 
@@ -279,40 +195,183 @@ namespace __LIBOPTPARSE__ {
             }           
         }
     }
+
 }
 
-std::shared_ptr<const Options> OptionParser::parse(
+class OptionParser::Impl {
+public:
+    Impl()
+        : _option_arguments(new OptionParser::container()),
+          _program_info(new ProgramInfo()) { }
+
+    explicit Impl(const ProgramInfo& program_info)
+        : _option_arguments(new OptionParser::container()),
+          _program_info(new ProgramInfo(program_info)) { }
+
+    explicit Impl(const Impl& impl)
+        : _option_arguments(new OptionParser::container(
+                                impl._option_arguments -> begin(),
+                                impl._option_arguments -> end())),
+          _program_info(new ProgramInfo(*impl._program_info)) { }
+
+    explicit Impl(Impl&& impl)
+        : _option_arguments(impl._option_arguments.release()),
+          _program_info(impl._program_info) {
+    }
+
+    OptionArgument& add(const OptionArgument& argument) {
+        std::shared_ptr<OptionArgument> ptr(
+            new OptionArgument(argument));
+        _option_arguments -> push_back(ptr);
+        return *ptr;
+    }
+
+    OptionArgument& add(char short_name) {
+        std::shared_ptr<OptionArgument> ptr(
+            new OptionArgument(short_name));
+        _option_arguments -> push_back(ptr);
+        return *ptr;
+    }
+
+    OptionArgument& add(char short_name,
+                        const std::string& long_name) {
+        std::shared_ptr<OptionArgument> ptr(new OptionArgument(
+                                            short_name,
+                                            long_name));
+        _option_arguments -> push_back(ptr);
+        return *ptr;
+    }
+
+    std::unique_ptr<const Options> parse(
+        int argc, const char *argv[]) {
+        Options::options_container opts_values;
+        Options::arguments_container args_values;
+        std::map<char, const OptionArgument*> arguments;
+        std::map<std::string, char> opt_mapping;
+        std::list<Token> tokens;
+        for(auto option_arg : *_option_arguments) {
+            arguments[option_arg -> get_short_name()] =
+                option_arg.get();
+            opt_mapping[option_arg -> get_long_name()] =
+                option_arg -> get_short_name();
+            opts_values[option_arg -> get_short_name()] =
+                Options::value_type(
+                    new OptionArgumentValue(
+                        option_arg -> get_default_value()));
+        }    
+        tokenize(argc, argv, std::back_inserter(tokens));
+        evaluate(tokens.begin(),
+                 tokens.end(),
+                 *_program_info,
+                 arguments,
+                 opt_mapping,
+                 opts_values,
+                 std::back_inserter(args_values));
+        return std::unique_ptr<const Options>(
+            new Options(
+                *_program_info,
+                opts_values.cbegin(),
+                opts_values.cend(),
+                args_values.cbegin(),
+                args_values.cend()));
+    }
+
+    OptionParser::const_iterator cbegin() {
+        return _option_arguments -> cbegin();
+    }
+
+    OptionParser::const_iterator cend() {
+        return _option_arguments -> cend();
+    }
+
+    /*!
+     * Assertion method used to check if this parser is valid or not.
+     * \return True if this parser is valid, false otherwise.
+     */
+    bool OK() const noexcept {    
+        for (auto& opt_arg : *_option_arguments) {
+            _LIBOPTPARSE_::is_valid_opt_arg(*opt_arg);
+        }
+        return true;
+    }
+
+private:
+    
+    /*! Pointer to the option argument list. */
+    std::unique_ptr<container>   _option_arguments;
+
+    /*! Pointer to the program informations.  */
+    std::shared_ptr<ProgramInfo> _program_info;
+
+};
+
+
+OptionParser::OptionParser()
+    : _pimpl(new Impl())  { }
+
+OptionParser::OptionParser(const ProgramInfo& program_info)
+    : _pimpl(new Impl(program_info)) { }
+
+OptionParser::OptionParser(const OptionParser& option_parser)
+    : _pimpl(new Impl(*option_parser._pimpl)) { }
+
+OptionParser::OptionParser(OptionParser&& option_parser)
+    : _pimpl(std::move(option_parser._pimpl)) { }
+
+OptionParser::~OptionParser() { }
+
+OptionArgument& OptionParser::add(const OptionArgument& argument) {
+    assert(_pimpl -> OK() && _LIBOPTPARSE_::is_valid_opt_arg(argument));
+    OptionArgument& added = _pimpl -> add(argument);
+    assert(_pimpl -> OK() &&
+           _LIBOPTPARSE_::is_valid_opt_arg(added) &&
+           added == argument);
+    return added;
+}
+
+OptionArgument& OptionParser::add(char short_name) {
+    assert(_pimpl -> OK() &&
+           _LIBOPTPARSE_::is_valid_short_name(short_name));
+    OptionArgument& added = _pimpl -> add(short_name);
+    assert(_pimpl -> OK() &&
+           _LIBOPTPARSE_::is_valid_opt_arg(added) &&
+           added.get_short_name() == short_name);
+    return added;
+}
+
+OptionArgument& OptionParser::add(char short_name,
+                                  const std::string& long_name) {
+    assert(_pimpl -> OK() &&
+           _LIBOPTPARSE_::is_valid_short_name(short_name) &&
+           _LIBOPTPARSE_::is_valid_long_name(long_name));
+    OptionArgument& added = _pimpl -> add(short_name, long_name);
+    assert(_pimpl -> OK() &&
+           _LIBOPTPARSE_::is_valid_opt_arg(added) &&
+           added.get_short_name() == short_name &&
+           added.get_long_name() == long_name);    
+    return added;
+}
+
+OptionParser::const_iterator OptionParser::cbegin() {
+    assert(_pimpl -> OK());
+    auto itr = _pimpl -> cbegin();
+    assert(_pimpl -> OK());
+    return itr;
+}
+
+OptionParser::const_iterator OptionParser::cend() {
+    assert(_pimpl -> OK());
+    auto itr = _pimpl -> cend();
+    assert(_pimpl -> OK());
+    return itr;
+}
+
+
+std::unique_ptr<const Options> OptionParser::parse(
     int argc, const char *argv[]) {
-    assert(OK());
-    Options::options_container opts_values;
-    Options::arguments_container args_values;
-    std::map<char, const OptionArgument*> arguments;
-    std::map<std::string, char> opt_mapping;
-    std::list<__LIBOPTPARSE__::Token> tokens;
-    for(auto option_arg : *_option_arguments) {
-        arguments[option_arg -> get_short_name()] = option_arg.get();
-        opt_mapping[option_arg -> get_long_name()] =
-            option_arg -> get_short_name();
-        opts_values[option_arg -> get_short_name()] =
-            Options::value_type(
-                new OptionArgumentValue(
-                    option_arg -> get_default_value()));
-    }    
-    __LIBOPTPARSE__::tokenize(argc, argv, std::back_inserter(tokens));
-    __LIBOPTPARSE__::evaluate(tokens.begin(),
-                              tokens.end(),
-                              *_program_info,
-                              arguments,
-                              opt_mapping,
-                              opts_values,
-                              std::back_inserter(args_values));
-    std::shared_ptr<const Options> options(
-        new Options(
-            *_program_info,
-            opts_values.cbegin(),
-            opts_values.cend(),
-            args_values.cbegin(),
-            args_values.cend()));
-    assert(OK());
+    assert(_pimpl -> OK());
+    std::unique_ptr<const Options> options =
+        _pimpl -> parse(argc, argv);
+    assert(_pimpl -> OK());
     return options;
 }

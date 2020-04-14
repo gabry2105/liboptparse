@@ -113,7 +113,24 @@ OptionArgumentValue::operator std::string() const {
     return get_value();
 }
 
-    
+
+bool operator==(const OptionArgumentValue& first,
+                const OptionArgumentValue& second) {
+    return first.get_value() == second.get_value();
+}
+
+bool operator!=(const OptionArgumentValue& first,
+                const OptionArgumentValue& second) {
+    return !(first == second);
+}
+
+std::ostream& operator<<(std::ostream& os,
+                         const OptionArgumentValue& value) {
+    os << value.get_value();
+    return os;
+}
+
+
 class OptionArgument::Impl {
 public:
     explicit Impl(char short_name)

@@ -172,6 +172,26 @@ bool operator==(const OptionArgumentValue& first,
                 const OptionArgumentValue& second);
 
 /*!
+ * Not equals operator overload. Checks if the two option value passed
+ * are different or not. Two option values are differents if they are
+ * not equals: see operator==
+ * \param  first  - First object to compare.
+ * \param  second - Second object to compare.
+ * \return True if two values are differents, false otherwise.
+ */
+bool operator!=(const OptionArgumentValue& first,
+                const OptionArgumentValue& second);
+
+/*!
+ * ostream operator overload. It put the value in the out stream
+ * passed as parameter.
+ * \param os    - Out stream where put value
+ * \param value - Valute to put in the out stream.
+ * \return os reference to allow chaining.
+ */
+std::ostream& operator<<(std::ostream& os,
+                         const OptionArgumentValue& value);
+/*!
  * This is an enumeration type representing the value type of an
  * argument.
  */

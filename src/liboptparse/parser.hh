@@ -63,6 +63,12 @@ public:
     OptionParser();
 
     explicit OptionParser(const ProgramInfo& program_info);
+
+    /*! Private not implemented */
+    OptionParser(const OptionParser&)
+
+    /*! Private not implemented */;
+    OptionParser(OptionParser&&);
     
     /*! Default destructor */
     ~OptionParser();
@@ -121,7 +127,8 @@ public:
      * \post Argument returned is valid with the short and long name
      *       specified and. Parser is still valid.
      */
-    OptionArgument& add(char short_name, const std::string& long_name);
+    OptionArgument& add(char short_name,
+                        const std::string& long_name);
 
     /*!
      * Parse the option specified as parameter according to the option
@@ -132,7 +139,7 @@ public:
      *       of argv vector.
      * \post Options are VALID and parser is still valid.
      */
-    std::shared_ptr<const Options> parse(int argc,
+    std::unique_ptr<const Options> parse(int argc,
                                          const char *argv[]);
 
     /*!
@@ -157,24 +164,11 @@ public:
      */
     const_iterator cend();
 private:
+    OptionParser& operator=(const OptionParser&);
 
-    /*!
-     * Assertion method used to check if this parser is valid or not.
-     * \return True if this parser is valid, false otherwise.
-     */
-    bool OK() const noexcept;
+    class Impl;
+    std::unique_ptr<Impl> _pimpl;
 
-    /*! Private not implemented */
-    OptionParser(const OptionParser&)
-
-    /*! Private not implemented */;
-    OptionParser(const OptionParser&&);
-
-    /*! Pointer to the option argument list. */
-    std::unique_ptr<container>   _option_arguments;
-
-    /*! Pointer to the program informations.  */
-    std::shared_ptr<ProgramInfo> _program_info;
 };
 
 #endif
