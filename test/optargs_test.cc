@@ -47,11 +47,22 @@ TEST(OptionArgumentValueTest, Test_03) {
 }
 
 /**
+ * HAVE A valid unsigned int value
+ * WEHN assign to a unsigned int variable
+ * THEN variable has the right value.
+ */
+TEST(OptionArgumentValueTest, Test_04) {
+    OptionArgumentValue short_value("42");
+    unsigned int check_unsigned = short_value;
+    CHECK_EQUAL(42, check_unsigned);
+}
+
+/**
  * HAVE A valid long value
  * WHEN assign to a long variable
  * THEN variable has the right value.
  */
-TEST(OptionArgumentValueTest, Test_04) {
+TEST(OptionArgumentValueTest, Test_05) {
     OptionArgumentValue long_value("42");
     long check_long = long_value;
     CHECK_EQUAL(42, check_long);
@@ -62,7 +73,7 @@ TEST(OptionArgumentValueTest, Test_04) {
  * WHEN assign to a unsigned short variable
  * THEN variable has the right value.
  */
-TEST(OptionArgumentValueTest, Test_05) {
+TEST(OptionArgumentValueTest, Test_06) {
     OptionArgumentValue ushort_value("42");
     unsigned short check_ushort = ushort_value;
     CHECK_EQUAL(42, check_ushort);
@@ -73,7 +84,7 @@ TEST(OptionArgumentValueTest, Test_05) {
  * WHEN assign to a usigned long variable
  * THEN variable has the right value.
  */
-TEST(OptionArgumentValueTest, Test_06) {
+TEST(OptionArgumentValueTest, Test_07) {
     OptionArgumentValue ulong_value("42");
     unsigned long check_ulong = ulong_value;
     CHECK_EQUAL(42, check_ulong);
@@ -84,7 +95,7 @@ TEST(OptionArgumentValueTest, Test_06) {
  * WHEN assign to a float variable
  * THEN variable has the right value.
  */
-TEST(OptionArgumentValueTest, Test_07) {
+TEST(OptionArgumentValueTest, Test_08) {
     OptionArgumentValue float_value("42.42f");
     float check_float = float_value;
     CHECK_EQUAL(42.42f, check_float);
@@ -95,7 +106,7 @@ TEST(OptionArgumentValueTest, Test_07) {
  * WHEN assign to a double variable
  * THEN variable has the right value.
  */
-TEST(OptionArgumentValueTest, Test_08) {
+TEST(OptionArgumentValueTest, Test_09) {
     OptionArgumentValue double_value("42.42");
     double check_double = double_value;
     CHECK_EQUAL(42.42, check_double);
@@ -106,7 +117,7 @@ TEST(OptionArgumentValueTest, Test_08) {
  * WHEN assign to a std::string
  * THEN variable is same of the get_value return value.
  */
-TEST(OptionArgumentValueTest, Test_09) {
+TEST(OptionArgumentValueTest, Test_10) {
     OptionArgumentValue string_value("Life, universe and all things");
     std::string check_str = string_value;
     CHECK_EQUAL(check_str, "Life, universe and all things");

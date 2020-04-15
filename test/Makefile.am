@@ -1,4 +1,4 @@
-TESTS = cover.sh
+TESTS = optparse_test
 LDADD = -lCppUTest -lCppUTestExt
 check_PROGRAMS = optparse_test
 optparse_test_CXXFLAGS =  -W -Wall -std=c++17 --coverage

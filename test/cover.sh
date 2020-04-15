@@ -1,6 +1,6 @@
 #!/bin/bash
 
-../test/optparse_test
+./test/optparse_test
 result="$?"
 if [ "$result" -ne 0 ]; then
     exit $result
