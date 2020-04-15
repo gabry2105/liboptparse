@@ -45,7 +45,7 @@ else
 fi
 cd $DIR/cover
 make clean
-make check
+make CXXFLAGS='-g -O0' check
 if [ -d "$COVERDIR/site" ]; then
    rm -rf site
 fi

@@ -23,7 +23,8 @@
 #include "liboptparse/utils.hh"
 #include "liboptparse/optargs.hh"
 
-OptionArgumentValue::OptionArgumentValue() { }
+OptionArgumentValue::OptionArgumentValue()
+    :_value("") { }
 
 OptionArgumentValue::OptionArgumentValue(const std::string& value)
     : _value(value) { }
@@ -154,24 +155,6 @@ public:
         assert(impl.OK());    
         assert(OK());
     }
-    
-    char get_short_name() const noexcept {
-        assert(OK());
-        return _short_name;
-    }
-
-    const std::string& get_long_name() const noexcept {
-        assert(OK());
-        return _long_name;
-    }
-    
-    const std::string& get_help() const noexcept {
-        return _help;
-    }
-
-    void set_help(const std::string& help) noexcept {
-        _help = help;
-    }
 
     const std::string& get_default_value() const noexcept {
         return _default_value;
@@ -182,6 +165,24 @@ public:
         _default_value = default_value;
     }
 
+    const std::string& get_help() const noexcept {
+        return _help;
+    }
+
+    void set_help(const std::string& help) noexcept {
+        _help = help;
+    }
+
+    const std::string& get_long_name() const noexcept {
+        assert(OK());
+        return _long_name;
+    }
+    
+    char get_short_name() const noexcept {
+        assert(OK());
+        return _short_name;
+    }
+
     const std::string& get_metavar() const noexcept {
         return _metavar;
     }
@@ -189,7 +190,7 @@ public:
     void set_metavar(const std::string& metavar) noexcept {
         _metavar = metavar;
     }
-
+    
     OptionArgumentType get_type() const noexcept {
         return _type;
     }
