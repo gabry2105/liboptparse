@@ -27,7 +27,6 @@
  * container.
  */
 
-#include "optargs.hh"
 #include <list>
 #include <memory>
 

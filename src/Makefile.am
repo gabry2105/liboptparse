@@ -2,13 +2,11 @@ lib_LTLIBRARIES = liboptparse.la
 nobase_include_HEADERS = liboptparse/liboptparse.hh \
 	liboptparse/optargs.hh \
 	liboptparse/options.hh \
+	liboptparse/option_arguments.hh \
 	liboptparse/parser.hh \
 	liboptparse/plain_arguments.hh \
 	liboptparse/program_info.hh \
 	liboptparse/utils.hh
-
-# To include some lib, es libcurl:
-# liboptparse_la_LIBADD = -lcurl
 
 liboptparse_la_CXXFLAGS = -std=c++17
 
@@ -19,6 +17,8 @@ liboptparse_la_SOURCES = \
 	liboptparse/options.hh \
 	liboptparse/options_priv.hpp \
 	options.cc \
+	liboptparse/option_arguments.hh \
+	liboptparse/option_arguments_priv.hpp \
 	liboptparse/parser.hh \
 	parser.cc \
 	liboptparse/plain_arguments.hh \
