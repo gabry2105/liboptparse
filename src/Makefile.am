@@ -3,6 +3,7 @@ nobase_include_HEADERS = liboptparse/liboptparse.hh \
 	liboptparse/optargs.hh \
 	liboptparse/options.hh \
 	liboptparse/parser.hh \
+	liboptparse/plain_arguments.hh \
 	liboptparse/program_info.hh \
 	liboptparse/utils.hh
 
@@ -20,6 +21,8 @@ liboptparse_la_SOURCES = \
 	options.cc \
 	liboptparse/parser.hh \
 	parser.cc \
+	liboptparse/plain_arguments.hh \
+	liboptparse/plain_arguments_priv.hpp \
 	liboptparse/program_info.hh \
 	program_info.cc \
 	liboptparse/utils.hh \
