@@ -43,9 +43,11 @@ public:
         OptsForwardIterator opts_end,
         ArgsForwardIterator args_begin,
         ArgsForwardIterator args_end)
-        : _args(new Options::arguments_container(args_begin, args_end)),
+        : _args(new Options::arguments_container(args_begin,
+                                                 args_end)),
           _program_info(new ProgramInfo(program_info)),
-          _opts(new Options::options_container(opts_begin, opts_end)) { };
+          _opts(new Options::options_container(opts_begin,
+                                               opts_end)) { };
     
     template<class OptsForwardIterator>
     Impl(
@@ -54,7 +56,8 @@ public:
         OptsForwardIterator opts_end)
         : _args(new Options::arguments_container()),
           _program_info(new ProgramInfo(program_info)),
-          _opts(new Options::options_container(opts_begin, opts_end)) { };
+          _opts(new Options::options_container(opts_begin,
+                                               opts_end)) { };
 
     bool OK() const noexcept;
 

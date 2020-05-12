@@ -45,11 +45,13 @@ else
 fi
 cd $DIR/cover
 make clean
-make CXXFLAGS='-g -O0' check
+make CXXFLAGS='-g -O0 --coverage' check
 if [ -d "$COVERDIR/site" ]; then
    rm -rf site
 fi
 mkdir site
-cd src
-lcov --directory . --capture --output-file liboptparse.info
-genhtml liboptparse.info -o ../site
+COVER_INFO_FILE=liboptparse.info
+lcov --directory . --capture --output-file $COVER_INFO_FILE
+# This line remove the std coverage from info file.
+lcov --remove $COVER_INFO_FILE "/usr/*" -o $COVER_INFO_FILE
+genhtml $COVER_INFO_FILE -o ./site

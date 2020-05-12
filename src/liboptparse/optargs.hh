@@ -1,5 +1,5 @@
 /* liboptparse is a library used to handle command line options.
- * Copyright (C) 2019 Guybrush aka Gabriele Labita
+ * Copyright (C) 2020 Guybrush aka Gabriele Labita
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -59,7 +59,6 @@ public:
 
     /*! Move constructor. */
     OptionArgumentValue(const OptionArgumentValue&& option_value);
-
     
     /*! Default constructor. */
     ~OptionArgumentValue();
@@ -135,7 +134,6 @@ public:
      * to return same value.
      */
     operator std::string() const;
-
     
     /*!
      * This is the getter method used to returns the value passed in

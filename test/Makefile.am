@@ -1,7 +1,7 @@
 TESTS = optparse_test
 LDADD = -lCppUTest -lCppUTestExt
 check_PROGRAMS = optparse_test
-optparse_test_CXXFLAGS =  -W -Wall -std=c++17 --coverage
+optparse_test_CXXFLAGS =  -W -Wall -std=c++17
 
 optparse_test_SOURCES = \
 	cpputest_main.cc \

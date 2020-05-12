@@ -23,7 +23,7 @@
  * \author    Gabriele Labita
  *            <gabriele.labita@linux.it>
  *
- * This file contains the defintino of the option arguments, used to
+ * This file contains the definition of the option arguments, used to
  * represent the options passed to the CLI.
  */
 
